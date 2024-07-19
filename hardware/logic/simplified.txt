@@ -1,0 +1,5 @@
+O1: L+P
+02: H + P
+03: CD + GH + KL + QP
+04: BD + FH + JL + ZP
+05: IL + MP + AD + EH
