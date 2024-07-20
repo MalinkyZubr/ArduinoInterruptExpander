@@ -3,51 +3,51 @@
 
 
 #define VI_MAXIMUM_ADDRESS 0b00011111
-#define VI_MAXIMUM_BITS 7
 #define VI_MAXIMUM_DEVICES 32
 
 
+volatile int global_reading_flag = 0;
+
 typedef struct VirtualInterruptFrame {
     int interrupt_address = 0b00000000;
-    int continuation_bit = 0;
     int bits_received = 0;
 } VirtualInterruptFrame;
 
 typedef void (*VirtualISR)();
 
-enum InterruptAddress {
-    DEVICE_01 = 0b00000000,
-    DEVICE_02 = 0b00000001,
-    DEVICE_03 = 0b00000010,
-    DEVICE_04 = 0b00000011,
-    DEVICE_05 = 0b00000100,
-    DEVICE_06 = 0b00000101,
-    DEVICE_07 = 0b00000110,
-    DEVICE_08 = 0b00000111,
-    DEVICE_09 = 0b00001000,
-    DEVICE_10 = 0b00001001,
-    DEVICE_11 = 0b00001010,
-    DEVICE_12 = 0b00001011,
-    DEVICE_13 = 0b00001100,
-    DEVICE_14 = 0b00001101,
-    DEVICE_15 = 0b00001110,
-    DEVICE_16 = 0b00001111,
-    DEVICE_17 = 0b00010000,
-    DEVICE_18 = 0b00010001,
-    DEVICE_19 = 0b00010010,
-    DEVICE_20 = 0b00010011,
-    DEVICE_21 = 0b00010100,
-    DEVICE_22 = 0b00010101,
-    DEVICE_23 = 0b00010110,
-    DEVICE_24 = 0b00010111,
-    DEVICE_25 = 0b00011000,
-    DEVICE_26 = 0b00011001,
-    DEVICE_27 = 0b00011010,
-    DEVICE_28 = 0b00011011,
-    DEVICE_29 = 0b00011100,
-    DEVICE_30 = 0b00011101,
-    DEVICE_31 = 0b00011110,
-    DEVICE_32 = 0b00011111
+enum InterruptAddress { // LSB trigger bit, MSB parity bit, MSB>>1 continuation bit
+    DEVICE_01 = 0b10000001,
+    DEVICE_02 = 0b10000011,
+    DEVICE_03 = 0b10000101,
+    DEVICE_04 = 0b10000111,
+    DEVICE_05 = 0b10001001,
+    DEVICE_06 = 0b10001011,
+    DEVICE_07 = 0b10001101,
+    DEVICE_08 = 0b10001111,
+    DEVICE_09 = 0b10010001,
+    DEVICE_10 = 0b10010011,
+    DEVICE_11 = 0b10010101,
+    DEVICE_12 = 0b10010111,
+    DEVICE_13 = 0b10011001,
+    DEVICE_14 = 0b10011011,
+    DEVICE_15 = 0b10011101,
+    DEVICE_16 = 0b10011111,
+    DEVICE_17 = 0b10100001,
+    DEVICE_18 = 0b10100011,
+    DEVICE_19 = 0b10100101,
+    DEVICE_20 = 0b10100111,
+    DEVICE_21 = 0b10101001,
+    DEVICE_22 = 0b10101011,
+    DEVICE_23 = 0b10101101,
+    DEVICE_24 = 0b10101111,
+    DEVICE_25 = 0b10110001,
+    DEVICE_26 = 0b10110011,
+    DEVICE_27 = 0b10110101,
+    DEVICE_28 = 0b10110111,
+    DEVICE_29 = 0b10111001,
+    DEVICE_30 = 0b10111011,
+    DEVICE_31 = 0b10111101,
+    DEVICE_32 = 0b10111111
 };
 
 typedef struct VirtualInterrupt {
@@ -60,9 +60,13 @@ typedef struct VirtualInterrupt {
 
 VirtualInterrupt instantiate_interrupt(enum InterruptAddress address);
 
-void ReceiveTriggerBit();
+char VIExternalIntReceiveTriggerBit();
 
-void ReceiveVIBit(VirtualInterruptFrame *buffer_frame);
+int VITimerInterruptPWM(int clock_pin, int clock_state);
+void VITimerInterruptRead(int read_pin, VirtualInterruptFrame* frame_buffer);
+
+int VITimerInterruptErrorCheck(char received_address);
+int VITimerCheckContinuationBit(VirtualInterruptFrame* frame_buffer);
 
 #endif
 

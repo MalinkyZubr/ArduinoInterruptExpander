@@ -4,9 +4,9 @@
 #include "VirtualInterrupt.h"
 
 
-enum TriggerInteruptPin {
-    TRIG_INT_1 = 2,
-    TRIG_INT_2 = 3
+enum VIReadPin {
+    VI_INT_1 = 2,
+    VI_INT_2 = 3
 };
 
 
@@ -23,16 +23,18 @@ class VirtualInterruptManager {
     private:
     int clock_state = 0;
     int currently_reading = 0;
-    TriggerInteruptPin interrupt_pin;
+    VIReadPin read_pin;
+    int clock_pin;
 
     VirtualInterruptFrame current_buffer;
     VirtualInterrupt interrupt_table[32];
 
     void enable_input_trigger();
     void disable_input_trigger();
+    void trigger_reading_state();
 
     public:
-    VirtualInterruptManager(TriggerInteruptPin interrupt_pin);
+    VirtualInterruptManager(VIReadPin read_pin, int clock_pin);
     VIManagerReturn attachVIInterrupt(InterruptAddress interrupt_address, VirtualISR isr, int immutable);
     VIManagerReturn modifyVIInterrupt(InterruptAddress interrupt_address, VirtualISR isr);
     VIManagerReturn detachVIInterrupt(InterruptAddress interrupt_address);
@@ -40,7 +42,20 @@ class VirtualInterruptManager {
     void enableVIInterrupt(InterruptAddress interrupt_address);
     void disableVIInterrupt(InterruptAddress interrupt_address);
     void triggerVIInterrupt(InterruptAddress interrupt_address);
+
+    void stop_reading();
+    int is_reading();
 };
+
+VirtualInterruptManager VI_Manager = VirtualInterruptManager(VI_INT_1, 4);
+
+ISR(TIMER1_COMPA_vect) {
+    VITimerInterruptPWM(x, y);
+
+    if(VI_Manager.is_reading()) {
+        // do other things
+    }
+}
 
 
 #endif

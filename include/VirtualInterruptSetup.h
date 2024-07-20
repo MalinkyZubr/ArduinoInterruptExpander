@@ -2,6 +2,8 @@
 #define VIRTUALINTERRUPTSETUP_H
 
 #include <Arduino.h>
+#include "VirtualInterrupt.h"
+
 
 // assuming 16 mhz clock
 enum PrescalerDivisor {
@@ -16,9 +18,5 @@ enum PrescalerDivisor {
 int set_prescaler(enum PrescalerDivisor prescaler_type);
 int set_timers(int reset_value);
 int set_interrupts();
-
-ISR(TIMER1_COMPA_vect) {
-    
-}
 
 #endif

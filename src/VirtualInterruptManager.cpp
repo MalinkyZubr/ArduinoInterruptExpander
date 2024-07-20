@@ -1,10 +1,15 @@
 #include "../include/VirtualInterruptManager.hpp"
 
 
-VirtualInterruptManager::VirtualInterruptManager(TriggerInteruptPin interrupt_pin) : interrupt_pin(interrupt_pin) {
+VirtualInterruptManager::VirtualInterruptManager(VIReadPin read_pin, int clock_pin) : read_pin(interrupt_pin), clock_pin(clock_pin) {
+    pinMode(read_pin, INPUT);
+    pinMode(clock_pin, OUTPUT);
+
     for(int interrupt_address = 0; interrupt_address < VI_MAXIMUM_DEVICES; interrupt_address++) {
         this->interrupt_table[interrupt_address] = instantiate_interrupt((InterruptAddress) interrupt_address);
     }
+
+    this->enable_input_trigger();
 }
 
 void VirtualInterruptManager::enable_input_trigger() {
@@ -13,6 +18,10 @@ void VirtualInterruptManager::enable_input_trigger() {
 
 void VirtualInterruptManager::disable_input_trigger() {
     detachInterrupt(digitalPinToInterrupt(this->interrupt_pin));
+}
+
+void VirtualInterruptManager::trigger_reading_state() {
+    this->currently_reading = 1;
 }
 
 VIManagerReturn VirtualInterruptManager::attachVIInterrupt(InterruptAddress interrupt_address, VirtualISR isr, int immutable = 0) {
@@ -92,4 +101,12 @@ void VirtualInterruptManager::triggerVIInterrupt(InterruptAddress interrupt_addr
     else {
         return_value = VI_ADDRESS_NOT_LOADED;
     }
+}
+
+void VirtualInterruptManager::stop_reading() {
+    this->currently_reading = 0;
+}
+
+int VirtualInterruptManager::is_reading() {
+    return this->currently_reading;
 }
