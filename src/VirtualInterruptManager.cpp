@@ -1,7 +1,7 @@
 #include "../include/VirtualInterruptManager.hpp"
 
 
-VirtualInterruptManager::VirtualInterruptManager(VIReadPin read_pin, int clock_pin) : read_pin(interrupt_pin), clock_pin(clock_pin) {
+VirtualInterruptManager::VirtualInterruptManager(VIReadPin read_pin, int clock_pin) : read_pin(read_pin) {
     pinMode(read_pin, INPUT);
     pinMode(clock_pin, OUTPUT);
 
@@ -10,18 +10,15 @@ VirtualInterruptManager::VirtualInterruptManager(VIReadPin read_pin, int clock_p
     }
 
     this->enable_input_trigger();
+    this->clock_manager.clock_pin = clock_pin
 }
 
 void VirtualInterruptManager::enable_input_trigger() {
-    attachInterrupt(digitalPinToInterrupt(this->interrupt_pin), ReceiveTriggerBit, RISING);
+    attachInterrupt(digitalPinToInterrupt(this->interrupt_pin), VISetGRFHigh(), RISING);
 }
 
 void VirtualInterruptManager::disable_input_trigger() {
     detachInterrupt(digitalPinToInterrupt(this->interrupt_pin));
-}
-
-void VirtualInterruptManager::trigger_reading_state() {
-    this->currently_reading = 1;
 }
 
 VIManagerReturn VirtualInterruptManager::attachVIInterrupt(InterruptAddress interrupt_address, VirtualISR isr, int immutable = 0) {
@@ -103,10 +100,10 @@ void VirtualInterruptManager::triggerVIInterrupt(InterruptAddress interrupt_addr
     }
 }
 
-void VirtualInterruptManager::stop_reading() {
-    this->currently_reading = 0;
+VIReadPin VirtualInterruptManager::get_read_pin() {
+    return this->read_pin;
 }
 
-int VirtualInterruptManager::is_reading() {
-    return this->currently_reading;
+VIClockManager* VirtualInterruptManager::get_clock_manager() {
+    return &this->clock_manager;
 }

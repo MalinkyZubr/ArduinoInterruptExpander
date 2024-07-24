@@ -60,6 +60,9 @@ typedef struct VirtualInterrupt {
 
 VirtualInterrupt instantiate_interrupt(enum InterruptAddress address);
 
+void VISetGRFHigh();
+void VISetGRFLow();
+
 char VIExternalIntReceiveTriggerBit();
 
 int VITimerInterruptPWM(int clock_pin, int clock_state);
@@ -67,6 +70,8 @@ void VITimerInterruptRead(int read_pin, VirtualInterruptFrame* frame_buffer);
 
 int VITimerInterruptErrorCheck(char received_address);
 int VITimerCheckContinuationBit(VirtualInterruptFrame* frame_buffer);
+
+
 
 #endif
 

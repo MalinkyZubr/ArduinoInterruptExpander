@@ -2,9 +2,10 @@
 #define VIRTUALINTERRUPTMANAGER_H
 
 #include "VirtualInterrupt.h"
+#include "VirtualInterruptSetup.h"
 
 
-enum VIReadPin {
+enum VIDataPin {
     VI_INT_1 = 2,
     VI_INT_2 = 3
 };
@@ -19,19 +20,24 @@ enum VIManagerReturn {
 };
 
 
+typedef struct VIClockManager {
+    int clock_state = 0;
+    int clock_pin;
+} VIClockManager;
+
+
+typedef struct VIReadBuffer {
+    VirtualInterruptFrame current_frame;
+    VirtualInterruptFrame multi_frame_message[3];
+} VIReadBuffer;
+
+
 class VirtualInterruptManager {
     private:
-    int clock_state = 0;
-    int currently_reading = 0;
-    VIReadPin read_pin;
-    int clock_pin;
-
-    VirtualInterruptFrame current_buffer;
     VirtualInterrupt interrupt_table[32];
 
     void enable_input_trigger();
     void disable_input_trigger();
-    void trigger_reading_state();
 
     public:
     VirtualInterruptManager(VIReadPin read_pin, int clock_pin);
@@ -42,18 +48,45 @@ class VirtualInterruptManager {
     void enableVIInterrupt(InterruptAddress interrupt_address);
     void disableVIInterrupt(InterruptAddress interrupt_address);
     void triggerVIInterrupt(InterruptAddress interrupt_address);
+};
 
-    void stop_reading();
-    int is_reading();
+
+class VirtualInterrupter {
+    private:
+    VIClockManager clock_manager;
+    VIDataPin data_pin;
+
+    public:
+    VirtualInterrupter();
+
+    VIDataPin get_data_pin();
+    void set_data_pin(VIDataPin data_pin);
+
+    VIClockManager* get_clock_manager();
+    void set_clock_pin(int clock_pin);
 };
 
 VirtualInterruptManager VI_Manager = VirtualInterruptManager(VI_INT_1, 4);
 
 ISR(TIMER1_COMPA_vect) {
-    VITimerInterruptPWM(x, y);
+    VIClockManager* clock_manager = VI_Manager.get_clock_manager();
+    clock_manager->clock_state = VITimerInterruptPWM(clock_manager->clock_pin, clock_manager->clock_state);
 
-    if(VI_Manager.is_reading()) {
-        // do other things
+    if(global_reading_flag == 1) {
+        VirtualInterruptFrame* VIBuffer = VI_Manager.getVIBuffer();
+        VITimerInterruptRead(VI_Manager.get_read_pin(), VIbuffer);
+
+        if(VIBuffer->bits_received == 8) {
+            if(VITimerInterruptErrorCheck(VIBuffer->received_address)) {
+                // error correction procedure here
+            }
+            else if(VITimerCheckContinuationBit(VIBuffer->received_address)) {
+                // continuiation procedure here
+            }
+            else {
+                VI_Manager.triggerVIInterrupt(VIBuffer->received_address);
+            }
+        }
     }
 }
 

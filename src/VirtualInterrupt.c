@@ -32,3 +32,11 @@ int VITimerInterruptErrorCheck(char received_address) { // return 1 if invalid a
 int VITimerCheckContinuationBit(VirtualInterruptFrame *frame_buffer) {
     return (frame_buffer->interrupt_address >> 6) ^ 1 == 0;
 }
+
+void VISetGRFHigh() {
+    global_reading_flag = 1;
+}
+
+void VISetGRFLow() {
+    global_reading_flag = 0;
+}
