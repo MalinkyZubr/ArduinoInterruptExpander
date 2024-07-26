@@ -3,6 +3,7 @@
 
 #include "VirtualInterrupt.h"
 #include "VirtualInterruptSetup.h"
+#include "../include/AtomicArduino/include/atomic.hpp"
 
 
 enum VIDataPin {
@@ -69,25 +70,29 @@ class VirtualInterrupter {
 VirtualInterruptManager VI_Manager = VirtualInterruptManager(VI_INT_1, 4);
 
 ISR(TIMER1_COMPA_vect) {
-    VIClockManager* clock_manager = VI_Manager.get_clock_manager();
-    clock_manager->clock_state = VITimerInterruptPWM(clock_manager->clock_pin, clock_manager->clock_state);
+    ATOMIC_OPERATION(() -> void {
+            VIClockManager* clock_manager = VI_Manager.get_clock_manager();
+            clock_manager->clock_state = VITimerInterruptPWM(clock_manager->clock_pin, clock_manager->clock_state);
 
-    if(global_reading_flag == 1) {
-        VirtualInterruptFrame* VIBuffer = VI_Manager.getVIBuffer();
-        VITimerInterruptRead(VI_Manager.get_read_pin(), VIbuffer);
+            if(global_reading_flag == 1) {
+                VirtualInterruptFrame* VIBuffer = VI_Manager.getVIBuffer();
+                VITimerInterruptRead(VI_Manager.get_read_pin(), VIbuffer);
 
-        if(VIBuffer->bits_received == 8) {
-            if(VITimerInterruptErrorCheck(VIBuffer->received_address)) {
-                // error correction procedure here
-            }
-            else if(VITimerCheckContinuationBit(VIBuffer->received_address)) {
-                // continuiation procedure here
-            }
-            else {
-                VI_Manager.triggerVIInterrupt(VIBuffer->received_address);
+                if(VIBuffer->bits_received == 8) {
+                    if(VITimerInterruptErrorCheck(VIBuffer->received_address)) {
+                        // error correction procedure here
+                    }
+                    else {
+                        VI_Manager.triggerVIInterrupt(VIBuffer->received_address);
+
+                        if(VITimerCheckContinuationBit(VIBuffer->received_address)) {
+                            // continuiation procedure here
+                        }
+                    }
+                }
             }
         }
-    }
+    )
 }
 
 
