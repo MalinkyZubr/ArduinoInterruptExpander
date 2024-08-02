@@ -1,0 +1,16 @@
+<mxfile host="Electron" modified="2024-08-02T01:45:20.779Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.5.3 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="jYvz6MhYXwW0As75jIsl" version="24.5.3" type="device">
+  <diagram name="Page-1" id="rGKIEnyW5p9XkLB6voS0">
+    <mxGraphModel dx="1364" dy="843" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="dxUsm-QvFjrYx_qqfbVW-2" value="Interrupt Expander" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="200" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="dxUsm-QvFjrYx_qqfbVW-3" value="Arduino Uno" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="40" width="200" height="440" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -272,4 +272,4 @@ def load_csv(csv_path: str) -> list[dict[str, str]]:
 
 
 if __name__ == "__main__":
-    pprint(minimize_dataset(load_csv(r"/home/malinkyzubr/Desktop/InterruptExpander/hardware/logic/scripts/TRUTH_TABLE2.csv")))
+    pprint(minimize_dataset(load_csv(r"/home/malinkyzubr/Desktop/InterruptExpander/hardware/logic/scripts/TRUTH_TABLE3.csv")))
