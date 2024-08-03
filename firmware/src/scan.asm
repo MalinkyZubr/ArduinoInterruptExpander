@@ -4,9 +4,6 @@
 .include "./spi.asm"
 .include "./gpio_ops.asm"
 
-.def clockMask = r16 ; holds toggle 1 for xor the plex clock value
-.def readMask = r17 ; bitmask for read port
-.def readValue = r19 ; the value read from the read pin
 
 .def temp1 = r20 ; misc general register
 .def temp2 = r21 ; misc general register
