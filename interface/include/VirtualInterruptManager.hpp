@@ -6,7 +6,7 @@
 #include "../include/AtomicArduino/include/atomic.hpp"
 
 
-enum VIDataPin {
+enum VICSPin {
     VI_INT_1 = 2,
     VI_INT_2 = 3
 };
@@ -21,27 +21,16 @@ enum VIManagerReturn {
 };
 
 
-typedef struct VIClockManager {
-    int clock_state = 0;
-    int clock_pin;
-} VIClockManager;
-
-
-typedef struct VIReadBuffer {
-    VirtualInterruptFrame current_frame;
-    VirtualInterruptFrame multi_frame_message[3];
-} VIReadBuffer;
-
-
 class VirtualInterruptManager {
     private:
-    VirtualInterrupt interrupt_table[32];
+    VirtualInterrupt interrupt_table[64];
+    VICSPin cs_pin
 
     void enable_input_trigger();
     void disable_input_trigger();
 
     public:
-    VirtualInterruptManager(VIReadPin read_pin, int clock_pin);
+    VirtualInterruptManager(VICSPin cs_pin);
     VIManagerReturn attachVIInterrupt(InterruptAddress interrupt_address, VirtualISR isr, int immutable);
     VIManagerReturn modifyVIInterrupt(InterruptAddress interrupt_address, VirtualISR isr);
     VIManagerReturn detachVIInterrupt(InterruptAddress interrupt_address);
@@ -51,21 +40,6 @@ class VirtualInterruptManager {
     void triggerVIInterrupt(InterruptAddress interrupt_address);
 };
 
-
-class VirtualInterrupter {
-    private:
-    VIClockManager clock_manager;
-    VIDataPin data_pin;
-
-    public:
-    VirtualInterrupter();
-
-    VIDataPin get_data_pin();
-    void set_data_pin(VIDataPin data_pin);
-
-    VIClockManager* get_clock_manager();
-    void set_clock_pin(int clock_pin);
-};
 
 VirtualInterruptManager VI_Manager = VirtualInterruptManager(VI_INT_1, 4);
 

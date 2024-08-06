@@ -2,16 +2,12 @@
 #define VIRTUALINTERRUPT_H
 
 
-#define VI_MAXIMUM_ADDRESS 0b1111111
-#define VI_MAXIMUM_DEVICES 32
+#define VI_MAXIMUM_ADDRESS 0b0011111
+#define VI_MAXIMUM_DEVICES 64
 
 
-volatile int global_reading_flag = 0;
+#include <stdint.h>
 
-typedef struct VirtualInterruptFrame {
-    int interrupt_address = 0b00000000;
-    int bits_received = 0;
-} VirtualInterruptFrame;
 
 typedef void (*VirtualISR)();
 
@@ -60,18 +56,7 @@ typedef struct VirtualInterrupt {
 
 VirtualInterrupt instantiate_interrupt(enum InterruptAddress address);
 
-void VISetGRFHigh();
-void VISetGRFLow();
-
-char VIExternalIntReceiveTriggerBit();
-
-int VITimerInterruptPWM(int clock_pin, int clock_state);
-void VITimerInterruptRead(int read_pin, VirtualInterruptFrame* frame_buffer);
-
-int VITimerInterruptErrorCheck(char received_address);
-int VITimerCheckContinuationBit(VirtualInterruptFrame* frame_buffer);
-
-
+void VITimerInterruptRead();
 
 #endif
 
