@@ -1,11 +1,11 @@
 #include "../include/VirtualInterruptManager.hpp"
 
 
-VirtualInterruptManager::VirtualInterruptManager(VIReadPin read_pin, int clock_pin) : read_pin(read_pin) {
+VirtualInterruptManager::VirtualInterruptManager(VICSPin cs_pin) : cs_pin(cs_pin) {
     pinMode(read_pin, INPUT);
     pinMode(clock_pin, OUTPUT);
 
-    for(int interrupt_address = 0; interrupt_address < VI_MAXIMUM_DEVICES; interrupt_address++) {
+    for(int interrupt_address = 0; interrupt_address < VI_MAXIMUM_DEVICES - 1; interrupt_address++) {
         this->interrupt_table[interrupt_address] = instantiate_interrupt((InterruptAddress) interrupt_address);
     }
 
