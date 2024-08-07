@@ -1,15 +1,24 @@
 #ifndef VIRTUALINTERRUPTMANAGER_H
 #define VIRTUALINTERRUPTMANAGER_H
 
+#include <Arduino.h>
 #include "VirtualInterrupt.h"
 #include "VirtualInterruptSetup.h"
-#include "../include/AtomicArduino/include/atomic.hpp"
+#include "VirtualInterruptTaskQueue.hpp"
+#include "./include/AtomicArduino/include/atomic.hpp"
 
 
-enum VICSPin {
-    VI_INT_1 = 2,
-    VI_INT_2 = 3
-};
+#ifndef VI_CS_PIN
+#define VI_CS_PIN 2
+#endif
+
+#if VI_CS_PIN == 2
+#define VI_INTERRUPT_VECTOR INT0_vect
+#elif VI_CS_PIN == 3
+#define VI_INTERRUPT_VECTOR INT1_vect
+#else
+#error "Use UNO interrupt pins for VI_CS_PIN"
+#endif
 
 
 enum VIManagerReturn {
@@ -24,13 +33,11 @@ enum VIManagerReturn {
 class VirtualInterruptManager {
     private:
     VirtualInterrupt interrupt_table[64];
-    VICSPin cs_pin
-
-    void enable_input_trigger();
-    void disable_input_trigger();
+    VITaskQueue &task_queue;
 
     public:
-    VirtualInterruptManager(VICSPin cs_pin);
+    VirtualInterruptManager(VITaskQueue &task_queue);
+
     VIManagerReturn attachVIInterrupt(InterruptAddress interrupt_address, VirtualISR isr, int immutable);
     VIManagerReturn modifyVIInterrupt(InterruptAddress interrupt_address, VirtualISR isr);
     VIManagerReturn detachVIInterrupt(InterruptAddress interrupt_address);
@@ -41,30 +48,19 @@ class VirtualInterruptManager {
 };
 
 
-VirtualInterruptManager VI_Manager = VirtualInterruptManager(VI_INT_1, 4);
+VITaskQueue task_queue = VITaskQueue();
+VirtualInterruptManager VI_Manager = VirtualInterruptManager(task_queue);
+const VISPISettings = SPISettings(4000000, MSBFIRST, SPI_MODE0)
 
-ISR(TIMER1_COMPA_vect) {
+ISR(VI_INTERRUPT_VECTOR) {
     ATOMIC_OPERATION(() -> void {
-            VIClockManager* clock_manager = VI_Manager.get_clock_manager();
-            clock_manager->clock_state = VITimerInterruptPWM(clock_manager->clock_pin, clock_manager->clock_state);
+            pinMode(VI_CS_PIN, OUTPUT);
+            digitalWrite(VI_CS_PIN, LOW);
 
-            if(global_reading_flag == 1) {
-                VirtualInterruptFrame* VIBuffer = VI_Manager.getVIBuffer();
-                VITimerInterruptRead(VI_Manager.get_read_pin(), VIbuffer);
+            uint8_t interrupt_address = VIRead(0b11111111); // put SPISettings object here)
+            VI_Manager.triggerVIINterrupt(interrupt_address);
 
-                if(VIBuffer->bits_received == 8) {
-                    if(VITimerInterruptErrorCheck(VIBuffer->received_address)) {
-                        // error correction procedure here
-                    }
-                    else {
-                        VI_Manager.triggerVIInterrupt(VIBuffer->received_address);
-
-                        if(VITimerCheckContinuationBit(VIBuffer->received_address)) {
-                            // continuiation procedure here
-                        }
-                    }
-                }
-            }
+            pinMode(VI_CS_PIN, INPUT_PULLUP);
         }
     )
 }

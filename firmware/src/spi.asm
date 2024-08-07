@@ -31,6 +31,15 @@ awaitSelect:
     readPinMacro dataRegister, SPIChipSelectMask
     andi dataRegister, 1
     brne awaitSelect
+
+    in dataRegister, DDRB
+    and dataRegister, ~SPIDataOutMask
+    out DDRB, dataRegister
+
+    in dataRegister, PORTB
+    or dataRegister, SPIDataOutMask 
+    out PORTB, dataRegister
+
     pop dataRegister
 
     ret
@@ -45,18 +54,26 @@ slaveSPITransferLoop:
     rjmp SlaveSPITransferLoop
     in dataRegister, USIDR
 
+    in r18, DDRB
+    or r18, SPIDataOutMask
+    out DDRB, r18
+
     ret
 
 ; @0: register holding data to be transmitted to master
 .macro SPITransferMacro @0
     push dataRegister
     push configBitmask
+    push r18
+    push r19
 
     mov dataRegister, @0
     rcall SPIInterruptMaster
     rcall SPIAwaitSelect
     rcall slaveSPITransfer
 
+    pop r19
+    pop r18
     pop configBitmask
     pop dataRegister
 .endmacro
