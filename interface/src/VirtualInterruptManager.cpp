@@ -90,3 +90,8 @@ void VirtualInterruptManager::triggerVIInterrupt(InterruptAddress interrupt_addr
         return_value = VI_ADDRESS_NOT_LOADED;
     }
 }
+
+
+void SPISetup(uint8_t vector) {
+    SPI.usingInterrupt(vector);
+}

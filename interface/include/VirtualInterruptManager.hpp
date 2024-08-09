@@ -20,6 +20,8 @@
 #error "Use UNO interrupt pins for VI_CS_PIN"
 #endif
 
+#pragma message ( VI_INTERRUPT_VETOR )
+
 
 enum VIManagerReturn {
     VI_OP_SUCCESS,
@@ -46,6 +48,8 @@ class VirtualInterruptManager {
     void disableVIInterrupt(InterruptAddress interrupt_address);
     void triggerVIInterrupt(InterruptAddress interrupt_address);
 };
+
+void SPISetup(uint8_t vector);
 
 
 VITaskQueue task_queue = VITaskQueue();

@@ -14,17 +14,19 @@ C_OBJECTS=$(patsubst $(SRC_PATH)/%.c, $(OBJ_PATH)/%.o, $(C_SOURCES))
 CPP_OBJECTS=$(patsubst $(SRC_PATH)/%.cpp, $(OBJ_PATH)/%.o, $(CPP_SOURCES))
 
 
-all: $(LIB_PATH)/ArduinoInterruptExpander.a
+all: LIB_ARCHIVE
 
 $(LIB_PATH):
 	mkdir -p $(LIB_PATH)
+	ar -r $(LIB_PATH)/ArduinoInterruptExpander.a
 
 $(OBJ_PATH):
 	mkdir -p $(OBJ_PATH)
 
-$(LIB_PATH)/ArduinoInterruptExpander.a: $(CPP_OBJECTS) $(C_OBJECTS) $(LIB_PATH)
-	ar rvs $(LIB_PATH)/ArduinoInterruptExpander.a $(C_OBJECTS)
-	ar rvs $(LIB_PATH)/ArduinoInterruptExpander.a $(CPP_OBJETS)
+LIB_ARCHIVE: $(CPP_OBJECTS) $(C_OBJECTS) $(LIB_PATH)
+	echo $(CPP_OBJECTS)
+	ar -rvs $(LIB_PATH)/ArduinoInterruptExpander.a $(CPP_OBJECTS)
+	ar -rvs $(LIB_PATH)/ArduinoInterruptExpander.a $(C_OBJECTS)
 
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c* | $(OBJ_PATH)
 	$(CC) $(CFLAGS) -c $< -o $@ $(INC_PATH)
