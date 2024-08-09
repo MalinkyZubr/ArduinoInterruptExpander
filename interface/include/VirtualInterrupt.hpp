@@ -6,6 +6,7 @@
 #define VI_MAXIMUM_VIRTUAL_INTERRUPTS 32
 
 
+#include <SPI.h>
 #include <stdint.h>
 
 
@@ -79,16 +80,16 @@ enum InterruptAddress { // LSB trigger bit, MSB parity bit, MSB>>1 continuation 
 };
 
 typedef struct VirtualInterrupt {
-    int initialized = 0;
-    int immutable = 0;
-    int enabled = 0;
+    int initialized;
+    int immutable;
+    int enabled;
     enum InterruptAddress address;
     VirtualISR isr;
 } VirtualInterrupt;
 
 VirtualInterrupt instantiate_interrupt(enum InterruptAddress address);
 
-uint8_t VIRead(const uint8_t send_byte, const SPISettings* spi_settings);
+uint8_t VIRead(const uint8_t send_byte, const SPISettings spi_settings);
 
 #endif
 

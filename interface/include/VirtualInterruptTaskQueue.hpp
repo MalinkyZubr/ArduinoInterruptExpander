@@ -2,7 +2,7 @@
 #define VIRTUALINTERRUPTTASKQUEUE_HPP
 
 #include <stdlib.h>
-#include "VirtualInterrupt.h"
+#include "VirtualInterrupt.hpp"
 
 
 typedef struct VITask {
@@ -13,8 +13,8 @@ typedef struct VITask {
 
 class VITaskQueue {
     private:
-    VITask *head = nullptr;
-    VITask *rear = nullptr;
+    VITask *head = NULL;
+    VITask *rear = NULL;
     int num_tasks;
 
     public:

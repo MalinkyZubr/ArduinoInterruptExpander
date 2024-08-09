@@ -1,11 +1,11 @@
-#include "../include/VirtualInterruptTaskQueue.hpp"
+#include "../include/VirtualInterruptTaskQueue.hpp" // configure interrupt to be active low enable
 
 
 void VITaskQueue::push_task(VirtualISR isr) {
     VITask* new_task = (VITask*)malloc(sizeof(VITask));
     new_task->isr = isr;
 
-    if(this->head == nullptr) {
+    if(this->head == NULL) {
         this->head = new_task;
         this->rear = new_task;
     }
@@ -17,12 +17,12 @@ void VITaskQueue::push_task(VirtualISR isr) {
 }
 
 void VITaskQueue::execute_task() {
-    if(this->head != nullptr) {
+    if(this->head != NULL) {
         VITask* selected_task = this->head;
 
         if(selected_task == this->rear) {
-            this->rear = nullptr;
-            this->head = nullptr;
+            this->rear = NULL;
+            this->head = NULL;
         }
         else {
             this->head = selected_task->previous;

@@ -2,10 +2,10 @@
 #define VIRTUALINTERRUPTMANAGER_H
 
 #include <Arduino.h>
-#include "VirtualInterrupt.h"
-#include "VirtualInterruptSetup.h"
+#include <SPI.h>
+#include "VirtualInterrupt.hpp"
 #include "VirtualInterruptTaskQueue.hpp"
-#include "./include/AtomicArduino/include/atomic.hpp"
+#include <io.h>
 
 
 #ifndef VI_CS_PIN
@@ -50,19 +50,20 @@ class VirtualInterruptManager {
 
 VITaskQueue task_queue = VITaskQueue();
 VirtualInterruptManager VI_Manager = VirtualInterruptManager(task_queue);
-const VISPISettings = SPISettings(4000000, MSBFIRST, SPI_MODE0)
 
 ISR(VI_INTERRUPT_VECTOR) {
-    ATOMIC_OPERATION(() -> void {
-            pinMode(VI_CS_PIN, OUTPUT);
-            digitalWrite(VI_CS_PIN, LOW);
+    cli();
 
-            uint8_t interrupt_address = VIRead(0b11111111); // put SPISettings object here)
-            VI_Manager.triggerVIINterrupt(interrupt_address);
+    pinMode(VI_CS_PIN, OUTPUT);
+    digitalWrite(VI_CS_PIN, LOW);
 
-            pinMode(VI_CS_PIN, INPUT_PULLUP);
-        }
-    )
+    //const uint8_t send_address = 0b11111111;
+    uint8_t interrupt_address = VIRead(0b11111111, SPISettings(4000000, MSBFIRST, SPI_MODE0)); // put SPISettings object here)
+    VI_Manager.triggerVIInterrupt((InterruptAddress)interrupt_address);
+
+    pinMode(VI_CS_PIN, INPUT_PULLUP);
+
+    sei();
 }
 
 

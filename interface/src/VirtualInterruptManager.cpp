@@ -4,12 +4,9 @@
 VirtualInterruptManager::VirtualInterruptManager(VITaskQueue &task_queue) : task_queue(task_queue) {
     pinMode(VI_CS_PIN, INPUT_PULLUP);
 
-    for(int interrupt_address = 0; interrupt_address < VI_MAXIMUM_DEVICES; interrupt_address++) {
+    for(int interrupt_address = 0; interrupt_address < VI_MAXIMUM_ADDRESS; interrupt_address++) {
         this->interrupt_table[interrupt_address] = instantiate_interrupt((InterruptAddress) interrupt_address);
     }
-
-    this->enable_input_trigger();
-    this->clock_manager.clock_pin = clock_pin
 }
 
 VIManagerReturn VirtualInterruptManager::attachVIInterrupt(InterruptAddress interrupt_address, VirtualISR isr, int immutable = 0) {
@@ -61,6 +58,8 @@ VIManagerReturn VirtualInterruptManager::detachVIInterrupt(InterruptAddress inte
     else {
         return_value = VI_ADDRESS_NOT_LOADED;
     }
+
+    return return_value;
 }
 
 void VirtualInterruptManager::enableVIInterrupt(InterruptAddress interrupt_address) {
