@@ -120,10 +120,10 @@
 .def scanCounter = r18 ; maximum 64
 
 .equ maxInputAddress = 65 ; maximum read address for interrupt expander
-.equ SPIDataInMask = (1<<PORTB0)
+.equ plexClockMask = (1<<PORTB0)
 .equ SPIDataOutMask = (1<<PORTB1)
 .equ SPIClockMask = (1<<PORTB2)
-.equ plexPortMask = (1<<PORTB3) ;handles clock and reading
+.equ plexReadMask = (1<<PORTB3) ;handles clock and reading
 .equ SPIChipSelectMask = (1<<PORTB4) ; doubles as interrupt port to tell master to initiate communications
 
 .set TEST_NUM = 0
@@ -219,10 +219,10 @@ testGPIOOpts:
     setPortOutputMacro SPIChipSelectMask
     setPortOutputHighMacro SPIChipSelectMask
 
-    setPortInputMacro plexPortMask
+    setPortInputMacro plexReadMask
 
     gpio_test_loop: ; await a high signal to the input gpio
-    readPortMacro r16, plexPortMask
+    readPortMacro r16, plexReadMask
     tst r16
     breq gpio_test_loop
 
@@ -342,25 +342,26 @@ slaveSPITransfer:
     out USIDR, dataRegister
     ldi configBitmask, (1<<USIOIF)
     out USISR, configBitmask
-    setPortInputMacro SPIDataInMask
     setPortOutputMacro SPIDataOutMask
 slaveSPITransferLoop:
+    sbis USISR, USIOIF
+    rjmp slaveSPITransferLoop
+    
     in dataRegister, USISR
-    sbrs dataRegister, USIOIF
-    rjmp SlaveSPITransferLoop
-    in dataRegister, USIDR
+    ori dataRegister, (1<<USIOIF)
+    out USISR, dataRegister
 
-    setPortOutputMacro SPIDataInMask
     setPortInputMacro SPIDataOutMask
 
     ret
 
 GPIOSetup:
     setPortOutputMacro SPIDataOutMask
-    setPortOutputMacro SPIDataOutMask
+    setPortOutputMacro plexClockMask
 
+    setPortInputMacro SPIClockMask
     setPortInputMacro SPIChipSelectMask
-    setPortInputMacro plexPortMask
+    setPortInputMacro plexReadMask
 
     ret
 
@@ -369,7 +370,7 @@ handlePlexInput:
     push temp1
     push ioTempReg
     
-    readPortMacro temp1, plexPortMask
+    readPortMacro temp1, plexReadMask
     cpi temp1, 0
     breq skipSPI; if there is no input from multiplexer skip the spi
 
@@ -384,10 +385,7 @@ scanMainLoop:
 start_loop:
     ldi scanCounter, 0
 next_iteration:
-    setPortOutputMacro plexPortMask
-    pulsePortMacro plexPortMask
-    setPortInputMacro plexPortMask
-
+    pulsePortMacro plexClockMask
     rcall handlePlexInput
 
     inc scanCounter
@@ -397,5 +395,3 @@ next_iteration:
     rjmp start_loop
 
     ret
-
-;.include "./subroutines.asm"

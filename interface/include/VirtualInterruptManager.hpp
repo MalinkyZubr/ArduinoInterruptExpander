@@ -36,7 +36,7 @@ enum VIManagerReturn {
 class VirtualInterruptManager {
     private:
     VirtualInterrupt interrupt_table[64];
-    VITaskQueue *task_queue = nullptr;
+    VITaskQueue *task_queue = NULL;
 
     public:
     VirtualInterruptManager() {}

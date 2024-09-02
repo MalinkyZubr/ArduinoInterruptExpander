@@ -1539,169 +1539,6 @@
 				)
 			)
 		)
-		(symbol "Device:D"
-			(pin_numbers hide)
-			(pin_names
-				(offset 1.016) hide)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "D"
-				(at 0 2.54 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "D"
-				(at 0 -2.54 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "~"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "Diode"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Sim.Device" "D"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Sim.Pins" "1=K 2=A"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_keywords" "diode"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_fp_filters" "TO-???* *_Diode_* *SingleDiode* D_*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "D_0_1"
-				(polyline
-					(pts
-						(xy -1.27 1.27) (xy -1.27 -1.27)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 0) (xy -1.27 0)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 1.27) (xy 1.27 -1.27) (xy -1.27 0) (xy 1.27 1.27)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "D_1_1"
-				(pin passive line
-					(at -3.81 0 0)
-					(length 2.54)
-					(name "K"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 3.81 0 180)
-					(length 2.54)
-					(name "A"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-		)
 		(symbol "Device:D_Zener"
 			(pin_numbers hide)
 			(pin_names
@@ -3811,12 +3648,6 @@
 		(uuid "b0ce0044-93b1-42cf-916d-f20d4526016e")
 	)
 	(junction
-		(at 327.66 53.34)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "b265ea5c-6812-4c25-bcb1-d4e3f8423b51")
-	)
-	(junction
 		(at 127 158.75)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -4192,16 +4023,6 @@
 	)
 	(wire
 		(pts
-			(xy 284.48 86.36) (xy 284.48 107.95)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "254da253-ad88-4938-b02a-2b31973cd812")
-	)
-	(wire
-		(pts
 			(xy 114.3 147.32) (xy 109.22 147.32)
 		)
 		(stroke
@@ -4279,16 +4100,6 @@
 			(type default)
 		)
 		(uuid "2b80bf9e-3ec1-43d2-907c-a49778f16797")
-	)
-	(wire
-		(pts
-			(xy 288.29 86.36) (xy 284.48 86.36)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "2c026f09-3742-46fa-b081-fa87c83b8e51")
 	)
 	(wire
 		(pts
@@ -4752,6 +4563,16 @@
 	)
 	(wire
 		(pts
+			(xy 288.29 86.36) (xy 285.75 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5798d793-9a54-4159-a3b9-53145dba8366")
+	)
+	(wire
+		(pts
 			(xy 19.05 176.53) (xy 25.4 176.53)
 		)
 		(stroke
@@ -5142,6 +4963,16 @@
 	)
 	(wire
 		(pts
+			(xy 285.75 35.56) (xy 285.75 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7807edc9-fd2c-4469-b744-3f7bd6da9323")
+	)
+	(wire
+		(pts
 			(xy 316.23 132.08) (xy 327.66 132.08)
 		)
 		(stroke
@@ -5362,16 +5193,6 @@
 	)
 	(wire
 		(pts
-			(xy 327.66 43.18) (xy 327.66 53.34)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "875c6059-93a7-479d-ad59-51751eeaadae")
-	)
-	(wire
-		(pts
 			(xy 127 78.74) (xy 125.73 78.74)
 		)
 		(stroke
@@ -5562,16 +5383,6 @@
 	)
 	(wire
 		(pts
-			(xy 294.64 53.34) (xy 327.66 53.34)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "987c5443-e9d0-4042-8f22-7c81b2b50eb9")
-	)
-	(wire
-		(pts
 			(xy 25.4 157.48) (xy 29.21 157.48)
 		)
 		(stroke
@@ -5599,16 +5410,6 @@
 			(type default)
 		)
 		(uuid "9c1857f9-39c7-453b-9fad-95423c5c047a")
-	)
-	(wire
-		(pts
-			(xy 284.48 107.95) (xy 358.14 107.95)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "a12d4ab2-5d12-4e9c-8821-44bc7504388d")
 	)
 	(wire
 		(pts
@@ -5912,7 +5713,7 @@
 	)
 	(wire
 		(pts
-			(xy 276.86 53.34) (xy 287.02 53.34)
+			(xy 276.86 53.34) (xy 327.66 53.34)
 		)
 		(stroke
 			(width 0)
@@ -6152,7 +5953,7 @@
 	)
 	(wire
 		(pts
-			(xy 25.4 35.56) (xy 327.66 35.56)
+			(xy 25.4 35.56) (xy 285.75 35.56)
 		)
 		(stroke
 			(width 0)
@@ -6567,7 +6368,7 @@
 		)
 		(uuid "b7aaefe0-2936-4601-a849-b898841db851")
 	)
-	(label "SPI-Out"
+	(label "NC"
 		(at 364.49 109.22 0)
 		(fields_autoplaced yes)
 		(effects
@@ -8988,92 +8789,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:D")
-		(at 290.83 53.34 180)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "bba4f200-3548-4a29-9bec-6355487d6598")
-		(property "Reference" "D3"
-			(at 290.83 46.99 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "D"
-			(at 290.83 49.53 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "InterrupterLibrary:RF01128"
-			(at 290.83 53.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 290.83 53.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Diode"
-			(at 290.83 53.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Sim.Device" "D"
-			(at 290.83 53.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Sim.Pins" "1=K 2=A"
-			(at 290.83 53.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "23978351-4c7a-48d8-8454-3a49532845ba")
-		)
-		(pin "2"
-			(uuid "a53391e9-364a-46d4-b9ad-7fc97c268148")
-		)
-		(instances
-			(project "InterruptExpanderPCB"
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "D3")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:C")
 		(at 127 163.83 0)
 		(unit 1)
@@ -9639,94 +9354,6 @@
 			(project "InterruptExpanderPCB"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
 					(reference "R6")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:D")
-		(at 327.66 39.37 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "e97c6e35-c668-4cc3-ac91-d3c0a7655a44")
-		(property "Reference" "D2"
-			(at 330.2 38.0999 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "D"
-			(at 330.2 40.6399 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "InterrupterLibrary:RF01128"
-			(at 327.66 39.37 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 327.66 39.37 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Diode"
-			(at 327.66 39.37 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Sim.Device" "D"
-			(at 327.66 39.37 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Sim.Pins" "1=K 2=A"
-			(at 327.66 39.37 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "ac6dfdf1-d7ed-4862-9026-f29b37d26408")
-		)
-		(pin "2"
-			(uuid "59316c49-78b4-44b8-8514-a8fcf1b5cee9")
-		)
-		(instances
-			(project ""
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "D2")
 					(unit 1)
 				)
 			)

@@ -46,8 +46,10 @@ int VITaskQueue::get_num_tasks() {
 }
 
 VITaskQueue::~VITaskQueue() {
+    this->num_tasks = 0;
+
     VITask* selected_task = this->head;
-    VITask* next_task = nullptr;
+    VITask* next_task = NULL;
     while(selected_task != NULL) {
         next_task = selected_task->previous;
         free(selected_task);

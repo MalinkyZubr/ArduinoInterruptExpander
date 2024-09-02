@@ -9,6 +9,10 @@ CC = g++
 CFLAGS = 
 INC_PATH =
 
+EXAMPLES_PATH:=./examples
+EXAMPLES_OBJECTS_PATH:=$(EXAMPLES_PATH)/objects
+EXAMPLES_HEX_PATH:=$(EXAMPLES_PATH)/hex
+
 C_SOURCES:=$(wildcard ./src/*.c) 
 CPP_SOURCES:=$(wildcard ./src/*.cpp)
 C_OBJECTS:=$(patsubst $(SRC_PATH)/%.c, $(OBJ_PATH)/%.o, $(C_SOURCES))
@@ -36,7 +40,7 @@ TEST_OBJECT_PATH:
 	mkdir -p ./test/obj
 
 # production build
-production: INC_PATH:=-I./include -I/usr/share/arduino/hardware/arduino/avr/cores/arduino/ -I -I/home/malinkyzubr/.platformio/packages/framework-arduino-avr/variants/atmega328pb/ -I/home/malinkyzubr/.platformio/packages/framework-arduino-avr/libraries/SPI/src/ -I/opt/microchip/xc8/v2.46/avr/avr/include/avr/
+production: INC_PATH:=-I./include -I/usr/share/arduino/hardware/arduino/avr/cores/arduino/ -I/home/malinkyzubr/.platformio/packages/framework-arduino-avr/variants/standard/ -I/home/malinkyzubr/.platformio/packages/framework-arduino-avr/variants/atmega328pb/ -I/home/malinkyzubr/.platformio/packages/framework-arduino-avr/libraries/SPI/src/ -I/opt/microchip/xc8/v2.46/avr/avr/include/avr/
 production: CFLAGS+=-O2 -mmcu=atmega328p -D F_CPU=16000000UL
 production: CC:=avr-gcc
 production: LIB_ARCHIVE INTERFACE_BINARY
