@@ -7,6 +7,7 @@
 
 
 start:
+    setupStack RAMEND
     rcall GPIOSetup
     rcall SPISetup
 

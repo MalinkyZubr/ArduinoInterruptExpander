@@ -20,8 +20,6 @@
 #error "Use UNO interrupt pins for VI_CS_PIN"
 #endif
 
-#pragma message ( VI_INTERRUPT_VETOR )
-
 
 enum VIManagerReturn {
     VI_OP_SUCCESS,
@@ -35,10 +33,11 @@ enum VIManagerReturn {
 class VirtualInterruptManager {
     private:
     VirtualInterrupt interrupt_table[64];
-    VITaskQueue &task_queue;
+    VITaskQueue *task_queue = nullptr;
 
     public:
-    VirtualInterruptManager(VITaskQueue &task_queue);
+    VirtualInterruptManager() {}
+    VirtualInterruptManager(VITaskQueue *task_queue);
 
     VIManagerReturn attachVIInterrupt(InterruptAddress interrupt_address, VirtualISR isr, int immutable);
     VIManagerReturn modifyVIInterrupt(InterruptAddress interrupt_address, VirtualISR isr);
@@ -50,25 +49,5 @@ class VirtualInterruptManager {
 };
 
 void SPISetup(uint8_t vector);
-
-
-VITaskQueue task_queue = VITaskQueue();
-VirtualInterruptManager VI_Manager = VirtualInterruptManager(task_queue);
-
-ISR(VI_INTERRUPT_VECTOR) {
-    cli();
-
-    pinMode(VI_CS_PIN, OUTPUT);
-    digitalWrite(VI_CS_PIN, LOW);
-
-    //const uint8_t send_address = 0b11111111;
-    uint8_t interrupt_address = VIRead(0b11111111, SPISettings(4000000, MSBFIRST, SPI_MODE0)); // put SPISettings object here)
-    VI_Manager.triggerVIInterrupt((InterruptAddress)interrupt_address);
-
-    pinMode(VI_CS_PIN, INPUT_PULLUP);
-
-    sei();
-}
-
 
 #endif

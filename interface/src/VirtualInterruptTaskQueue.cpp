@@ -38,3 +38,13 @@ void VITaskQueue::execute_task() {
 int VITaskQueue::get_num_tasks() {
     return this->num_tasks;
 }
+
+VITaskQueue::~VITaskQueue() {
+    VITask* selected_task = this->head;
+    VITask* next_task = nullptr;
+    while(selected_task != NULL) {
+        next_task = selected_task->previous;
+        free(selected_task);
+        selected_task = next_task;
+    }
+}

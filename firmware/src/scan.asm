@@ -11,15 +11,16 @@
 
 handlePlexInput:
     push temp1
-    readPortMacro temp1, plexReadPortMask
+    push temp2
+    
+    readPortMacro temp1, plexPortMask
     cpi temp1, 0
     breq skipSPI; if there is no input from multiplexer skip the spi
 
-    push temp2
     mov temp2, scanCounter
     SPITransferMacro temp2
-    pop temp2
 skipSPI: 
+    pop temp2
     pop temp1
     ret
 
@@ -27,7 +28,9 @@ scanMainLoop:
 start_loop:
     ldi scanCounter, 0
 next_iteration:
-    pulsePinMacro temp2, plexClockPortMask
+    setPortOutputMacro plexPortMask
+    pulsePinMacro temp2, plexPortMask
+    setPortInputMacro plexPortMask
 
     rcall handlePlexInput
 

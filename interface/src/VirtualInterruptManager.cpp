@@ -1,7 +1,7 @@
 #include "../include/VirtualInterruptManager.hpp"
 
 
-VirtualInterruptManager::VirtualInterruptManager(VITaskQueue &task_queue) : task_queue(task_queue) {
+VirtualInterruptManager::VirtualInterruptManager(VITaskQueue *task_queue) : task_queue(task_queue) {
     pinMode(VI_CS_PIN, INPUT_PULLUP);
 
     for(int interrupt_address = 0; interrupt_address < VI_MAXIMUM_ADDRESS; interrupt_address++) {
@@ -79,7 +79,7 @@ void VirtualInterruptManager::triggerVIInterrupt(InterruptAddress interrupt_addr
 
     if(virtual_interrupt->initialized == 1) {
         if(virtual_interrupt->enabled == 1) {
-            this->task_queue.push_task(interrupt_isr); // remember, what will happen if some program state is changed when task queue is populated? might cause issues
+            this->task_queue->push_task(interrupt_isr); // remember, what will happen if some program state is changed when task queue is populated? might cause issues
             return_value = VI_OP_SUCCESS;
         }
         else {

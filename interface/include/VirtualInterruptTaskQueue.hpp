@@ -15,13 +15,16 @@ class VITaskQueue {
     private:
     VITask *head = NULL;
     VITask *rear = NULL;
-    int num_tasks;
+    int num_tasks = 0;
 
     public:
+    VITaskQueue() {}
     void execute_task();
     void push_task(VirtualISR isr);
 
     int get_num_tasks();
+
+    ~VITaskQueue();
 };
 
 

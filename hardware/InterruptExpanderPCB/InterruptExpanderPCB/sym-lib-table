@@ -1,0 +1,7 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "SN74HCT138PWRE4")(type "KiCad")(uri "/home/malinkyzubr/Documents/kicad-libs/SN74HCT138PWRE4/SN74HCT138PWRE4.kicad_sym")(options "")(descr ""))
+  (lib (name "SN74HC590ADT")(type "KiCad")(uri "/home/malinkyzubr/Documents/kicad-libs/SN74HC590ADT/SN74HC590ADT.kicad_sym")(options "")(descr ""))
+  (lib (name "SN74HC251PWR")(type "KiCad")(uri "/home/malinkyzubr/Documents/kicad-libs/SN74HC251PWR/SN74HC251PWR.kicad_sym")(options "")(descr ""))
+  (lib (name "ATTINY85-20SU")(type "KiCad")(uri "/home/malinkyzubr/Documents/kicad-libs/ATTINY85-20SU/ATTINY85-20SU.kicad_sym")(options "")(descr ""))
+)

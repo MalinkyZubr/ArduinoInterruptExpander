@@ -1,17 +1,14 @@
 .include "../include/tn85def.inc"
 .include "../include/constants.inc"
+.include "./gpio_ops.asm"
 
 
 GPIOSetup:
-    push r16
+    setPortOutputMacro SPIDataOutMask
+    setPortOutputMacro SPIDataOutMask
 
-    ldi r16, SPIDataOutMask | SPIClockMask | plexClockPortMask
-    out DDRB, r16
-
-    ldi r16, SPIChipSelectMask
-    out PORTB, r16
-
-    pop r16
+    setPortInputMacro SPIChipSelectMask
+    setPortInputMacro plexPortMask
 
     ret
 

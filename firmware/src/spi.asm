@@ -24,7 +24,6 @@ SPIInterruptMaster:
     setPortInputMacro SPIChipSelectMask
 
     ret
-
 SPIAwaitSelect: ; add code here that will handle a timeout
     push dataRegister
 awaitSelect:

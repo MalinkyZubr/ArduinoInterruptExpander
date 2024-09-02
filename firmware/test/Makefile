@@ -1,0 +1,1 @@
+avrdude -p t85 -e -P /dev/ttyACM0 -c avrisp -b 19200 -U flash:w:test.hex
