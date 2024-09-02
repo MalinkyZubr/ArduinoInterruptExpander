@@ -3,6 +3,9 @@
 
 SPIClass SPI;
 
+SPISettings::SPISettings() {}
+SPISettings::SPISettings(int rate, int first, int mode) {}
+
 void SPIClass::beginTransaction(const SPISettings settings) {}
 void SPIClass::endTransaction() {}
 void SPIClass::usingInterrupt(int vector) {}

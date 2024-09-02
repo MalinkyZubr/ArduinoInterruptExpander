@@ -45,4 +45,38 @@ TEST_CASE("Testing SPI Interface Subclasses") {
 
 TEST_CASE("Testing the main SPI interrupt expander framework") {
     reset_test_space();
+
+    SUBCASE("Test VI attachment") {
+        CHECK(test_space.test_manager.attachVIInterrupt(VIRTUAL_INTERRUPT_01, testISR, 0) == VI_OP_SUCCESS);
+        CHECK(test_space.test_manager.attachVIInterrupt(VIRTUAL_INTERRUPT_01, testISR, 0) == VI_ADDRESS_OCCUPIED);
+        CHECK(test_space.test_manager.attachVIInterrupt(VIRTUAL_INTERRUPT_02, testISR, 1) == VI_OP_SUCCESS);
+    }
+
+    SUBCASE("Testing VI Modification") {
+        CHECK(test_space.test_manager.attachVIInterrupt(VIRTUAL_INTERRUPT_01, testISR, 0) == VI_OP_SUCCESS);
+        CHECK(test_space.test_manager.attachVIInterrupt(VIRTUAL_INTERRUPT_02, testISR, 1) == VI_OP_SUCCESS);
+        CHECK(test_space.test_manager.modifyVIInterrupt(VIRTUAL_INTERRUPT_01, testISR) == VI_OP_SUCCESS);
+        CHECK(test_space.test_manager.modifyVIInterrupt(VIRTUAL_INTERRUPT_02, testISR) == VI_IMMUTABLE);
+        CHECK(test_space.test_manager.modifyVIInterrupt(VIRTUAL_INTERRUPT_03, testISR) == VI_ADDRESS_NOT_LOADED);
+    }
+
+    SUBCASE("Testing VI detachment") {
+        CHECK(test_space.test_manager.attachVIInterrupt(VIRTUAL_INTERRUPT_01, testISR, 0) == VI_OP_SUCCESS);
+        CHECK(test_space.test_manager.attachVIInterrupt(VIRTUAL_INTERRUPT_02, testISR, 1) == VI_OP_SUCCESS);
+        CHECK(test_space.test_manager.detachVIInterrupt(VIRTUAL_INTERRUPT_02) == VI_OP_SUCCESS);
+        CHECK(test_space.test_manager.modifyVIInterrupt(VIRTUAL_INTERRUPT_02, testISR) == VI_ADDRESS_NOT_LOADED);
+        CHECK(test_space.test_manager.detachVIInterrupt(VIRTUAL_INTERRUPT_03) == VI_ADDRESS_NOT_LOADED);
+    }
+
+    SUBCASE("Testing Interrupt Triggers") {
+        CHECK(test_space.test_manager.attachVIInterrupt(VIRTUAL_INTERRUPT_01, testISR, 0) == VI_OP_SUCCESS);
+        CHECK(test_space.test_manager.triggerVIInterrupt(VIRTUAL_INTERRUPT_01) == VI_OP_SUCCESS);
+        CHECK(test_space.test_manager.runTaskFromQueue() == VI_OP_SUCCESS);
+        CHECK(test_space.execution_count == 1);
+        CHECK(test_space.test_manager.runTaskFromQueue() == VI_TASK_QUEUE_EMPTY);
+        CHECK(test_space.test_manager.disableVIInterrupt(VIRTUAL_INTERRUPT_01) == VI_OP_SUCCESS);
+        CHECK(test_space.test_manager.triggerVIInterrupt(VIRTUAL_INTERRUPT_01) == VI_DISABLED);
+        CHECK(test_space.test_manager.enableVIInterrupt(VIRTUAL_INTERRUPT_01) == VI_OP_SUCCESS);
+        CHECK(test_space.test_manager.triggerVIInterrupt(VIRTUAL_INTERRUPT_05) == VI_ADDRESS_NOT_LOADED);
+    }
 }

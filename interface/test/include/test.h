@@ -7,6 +7,7 @@
 #include "./SPI.h"
 #include "./io.h"
 #include "./Arduino.h"
+#include <stdio.h>
 
 
 typedef struct TestSpace {

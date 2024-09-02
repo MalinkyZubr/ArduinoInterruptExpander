@@ -16,7 +16,9 @@ void VITaskQueue::push_task(VirtualISR isr) {
     this->num_tasks++;
 }
 
-void VITaskQueue::execute_task() {
+int VITaskQueue::execute_task() {
+    int return_value = 1;
+
     if(this->head != NULL) {
         VITask* selected_task = this->head;
 
@@ -32,7 +34,11 @@ void VITaskQueue::execute_task() {
 
         free(selected_task);
         this->num_tasks--;
+
+        return_value = 0;
     }
+
+    return return_value;
 }
 
 int VITaskQueue::get_num_tasks() {

@@ -6,11 +6,13 @@
 #include <Arduino.h>
 #include "./VirtualInterruptManager.hpp"
 
+#define TEST_BUILD 0
 
-VITaskQueue task_queue = VITaskQueue();
-VirtualInterruptManager VI_Manager = VirtualInterruptManager(task_queue);
 
-ISR(VI_INTERRUPT_VECTOR) {
+extern VITaskQueue task_queue;
+extern VirtualInterruptManager VI_Manager;
+
+inline void VI_Routine() {
     cli();
 
     pinMode(VI_CS_PIN, OUTPUT);
@@ -24,5 +26,11 @@ ISR(VI_INTERRUPT_VECTOR) {
 
     sei();
 }
+
+#if TEST_BUILD == 1
+ISR(VI_INTERRUPT_VECTOR) {
+    VI_Routine();
+}
+#endif
 
 #endif

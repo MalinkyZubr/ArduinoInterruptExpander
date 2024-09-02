@@ -3,8 +3,14 @@
 
 #include <cstdint>
 
+#define MSBFIRST 0
+#define SPI_MODE0 0
 
-typedef struct SPISettings {} SPISettings;
+class SPISettings {
+    public:
+    SPISettings();
+    SPISettings(int rate, int first, int mode);
+};
 
 
 class SPIClass {

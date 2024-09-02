@@ -19,7 +19,7 @@ class VITaskQueue {
 
     public:
     VITaskQueue() {}
-    void execute_task();
+    int execute_task();
     void push_task(VirtualISR isr);
 
     int get_num_tasks();

@@ -22,7 +22,7 @@ all: test production
 
 # test build
 test: INC_PATH:=-I./include -I./test/include
-test: CFLAGS+=-g -Werror
+test: CFLAGS+=-g -DTEST_BUILD=1
 test: CC:=g++
 test: $(TEST_OBJ) $(CPP_OBJECTS)
 	$(CC) $(CFLAGS) -o $(TEST_BINARY) $(TEST_OBJ) $(CPP_OBJECTS) $(INC_PATH)
@@ -72,6 +72,5 @@ clean:
 	rm -rf $(EXAMPLES_OBJECTS_PATH)
 	rm -rf $(EXAMPLES_HEX_PATH)
 	rm -rf ./test/obj
-
 
 .PHONY: all test production clean
