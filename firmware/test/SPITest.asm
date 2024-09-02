@@ -1,9 +1,10 @@
-.include "../include/tn85def.inc"
-.include "../include/constants.inc"
-.include "../src/gpio_setup.asm"
-.include "../src/spi.asm"
+.include "../dev/tn85def.inc"
+
+.def temp1 = r20 ; misc general register
+.def temp2 = r21 ; misc general register
+
+.cseg
+.org 0x00
 
 
-start:
-    rcall SPISetup
-    
+ldi temp2, 0b00000000
