@@ -1,6 +1,5 @@
 .include "../include/tn85def.inc"
 
-
 .macro setupStack
     push r16
 
@@ -67,6 +66,33 @@
     rcall releaseGPIORegisters
 .endmacro
 
+; @0 constant containing desired bitmask for port bit
+.macro setPortOutputLowMacro
+    rcall acquireGPIORegisters
+
+    ldi bitmaskReg, @0
+    rcall setPortOutputLow
+
+    rcall releaseGPIORegisters
+.endmacro
+
+; @0 constant containing desired bitmask for port bit
+.macro setPortOutputHighMacro
+    rcall acquireGPIORegisters
+
+    ldi bitmaskReg, @0
+    rcall setPortOutputHigh
+
+    rcall releaseGPIORegisters
+.endmacro
+
+; @0 label for a subroutine
+.macro runSubroutineInLoop
+    subroutine_loop:
+    rcall @0
+    rjmp subroutine_loop
+.endmacro
+
 ; @0: register holding data to be transmitted to master
 .macro SPITransferMacro
     push dataRegister
@@ -100,12 +126,118 @@
 .equ plexPortMask = (1<<PORTB3) ;handles clock and reading
 .equ SPIChipSelectMask = (1<<PORTB4) ; doubles as interrupt port to tell master to initiate communications
 
+.set TEST_NUM = 0
+
 .cseg
 .org 0x00
 
+.if TEST_NUM == 0
 main:
     rcall start
     rcall scanMainLoop
+
+    rjmp main
+.else
+tests:
+.if TEST_NUM == 1
+    rcall testOutputPins
+.endif
+
+
+.if TEST_NUM == 2
+    rcall testSPISend
+.endif
+
+
+.if TEST_NUM == 3
+    rcall testInterruptTrigger
+.endif
+
+
+.if TEST_NUM == 4
+    rcall testGPIOOpts
+.endif
+
+
+.if TEST_NUM == 5
+    rcall testSPIAwaitSelect
+.endif
+.endif
+
+runSubroutineInLoop spazz
+
+spazz:
+    setPortOutputMacro SPIChipSelectMask
+    togglePortMacro SPIChipSelectMask
+
+    rcall delay
+
+delay: ; very basic delay routine with no inputs to use for tests
+    push r16
+
+    ldi r16, 255
+    delay_loop:
+    nop
+    nop
+    subi r16, 1
+    brne delay_loop
+
+    pop r16
+
+    ret
+
+
+testOutputPins: ; simple test to set pin to output so oscilloscope can read state
+    setPortOutputMacro SPIChipSelectMask
+    togglePortMacro SPIChipSelectMask
+
+    rcall delay
+
+    togglePortMacro SPIChipSelectMask
+
+    rcall delay
+
+    pulsePortMacro SPIChipSelectMask
+
+    ret
+
+testSPISend: ;; send a sample message out the SPI interface for oscilloscope to read
+    push r16
+    ldi r16, 0b10101010
+    SPITransferMacro r16
+
+    pop r16
+    ret
+
+testInterruptTrigger:
+    rcall SPIInterruptMaster
+    ret
+
+testGPIOOpts:
+    push r16
+
+    setPortOutputMacro SPIChipSelectMask
+    setPortOutputHighMacro SPIChipSelectMask
+
+    setPortInputMacro plexPortMask
+
+    gpio_test_loop: ; await a high signal to the input gpio
+    readPortMacro r16, plexPortMask
+    tst r16
+    breq gpio_test_loop
+
+    setPortOutputLowMacro SPIChipSelectMask
+
+    pop r16
+
+    ret
+
+testSPIAwaitSelect:
+    rcall SPIAwaitSelect
+    setPortOutputMacro SPIChipSelectMask
+    setPortOutputHighMacro SPIChipSelectMask
+
+    ret
 
 start:
     setupStack RAMEND
@@ -189,7 +321,7 @@ SPISetup:
     ret
 
 SPIInterruptMaster:
-    setPortOutputMacro SPIChipSelectMask ; optimize to just pass a register later
+    setPortOutputMacro SPIChipSelectMask
     pulsePortMacro SPIChipSelectMask
     setPortInputMacro SPIChipSelectMask
 
@@ -199,8 +331,8 @@ SPIAwaitSelect: ; add code here that will handle a timeout
     push dataRegister
 awaitSelect:
     readPortMacro dataRegister, SPIChipSelectMask
-    andi dataRegister, 1
-    brne awaitSelect
+    tst dataRegister
+    brne awaitSelect ; selected at logical low
 
     pop dataRegister
 
