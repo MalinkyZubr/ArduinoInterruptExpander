@@ -209,6 +209,14 @@ testSPISend: ;; send a sample message out the SPI interface for oscilloscope to 
     pop r16
     ret
 
+testSPISendReal:
+    push r16
+    ldi r16, 0b00010001
+    SPITransferMacro r16
+
+    pop r16
+    ret
+
 testInterruptTrigger:
     rcall SPIInterruptMaster
     ret
