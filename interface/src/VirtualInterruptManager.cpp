@@ -9,6 +9,13 @@ VirtualInterruptManager::VirtualInterruptManager(VITaskQueue *task_queue) : task
     }
 }
 
+VIManagerReturn VirtualInterruptManager::isLoadedVI(InterruptAddress interrupt_address) {
+    if(this->interrupt_table[interrupt_address].initialized) {
+        return VI_ADDRESS_OCCUPIED;
+    }
+    return VI_ADDRESS_NOT_LOADED;
+}
+
 VIManagerReturn VirtualInterruptManager::attachVIInterrupt(InterruptAddress interrupt_address, VirtualISR isr, int immutable = 0) {
     VirtualInterrupt virtual_interrupt = this->interrupt_table[interrupt_address];
     VIManagerReturn return_value;
@@ -28,6 +35,17 @@ VIManagerReturn VirtualInterruptManager::attachVIInterrupt(InterruptAddress inte
     }
 
     return return_value;
+}
+
+VirtualInterruptManager* VirtualInterruptManager::interruptTableBuilder(InterruptAddress interrupt_address, VirtualISR isr, int immutable = 0) {
+    VIManagerReturn return_value;
+
+    if(this->isLoadedVI(interrupt_address) == VI_ADDRESS_OCCUPIED) {
+        this->detachVIInterrupt(interrupt_address);
+    }
+    this->attachVIInterrupt(interrupt_address, isr, immutable);
+
+    return this;
 }
 
 VIManagerReturn VirtualInterruptManager::modifyVIInterrupt(InterruptAddress interrupt_address, VirtualISR isr) {

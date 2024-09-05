@@ -38,6 +38,8 @@ class VirtualInterruptManager {
     VirtualInterrupt interrupt_table[64];
     VITaskQueue *task_queue = NULL;
 
+    VIManagerReturn isLoadedVI(InterruptAddress interrupt_address);
+
     public:
     VirtualInterruptManager() {}
     VirtualInterruptManager(VITaskQueue *task_queue);
@@ -50,6 +52,7 @@ class VirtualInterruptManager {
     VIManagerReturn disableVIInterrupt(InterruptAddress interrupt_address);
     VIManagerReturn triggerVIInterrupt(InterruptAddress interrupt_address);
 
+    VirtualInterruptManager* interruptTableBuilder(InterruptAddress interrupt_address, VirtualISR isr, int immutable);
     VIManagerReturn runTaskFromQueue();
 };
 

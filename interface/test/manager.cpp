@@ -79,4 +79,19 @@ TEST_CASE("Testing the main SPI interrupt expander framework") {
         CHECK(test_space.test_manager.enableVIInterrupt(VIRTUAL_INTERRUPT_01) == VI_OP_SUCCESS);
         CHECK(test_space.test_manager.triggerVIInterrupt(VIRTUAL_INTERRUPT_05) == VI_ADDRESS_NOT_LOADED);
     }
+
+    SUBCASE("Testing Interrupt Builder") {
+        test_space.test_manager.interruptTableBuilder(VIRTUAL_INTERRUPT_01, testISR, 0)
+            ->interruptTableBuilder(VIRTUAL_INTERRUPT_01, testISR, 0)
+            ->interruptTableBuilder(VIRTUAL_INTERRUPT_02, testISR, 0)
+            ->interruptTableBuilder(VIRTUAL_INTERRUPT_03, testISR, 0);
+        
+        test_space.test_manager.triggerVIInterrupt(VIRTUAL_INTERRUPT_01);
+        test_space.test_manager.triggerVIInterrupt(VIRTUAL_INTERRUPT_02);
+
+        test_space.test_manager.runTaskFromQueue();
+        test_space.test_manager.runTaskFromQueue();
+
+        CHECK(test_space.execution_count == 2);
+    }
 }
