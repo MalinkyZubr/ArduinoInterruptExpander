@@ -1,5 +1,21 @@
 .include "../include/tn85def.inc"
 
+.def configBitmask = r16
+.def dataRegister = r17
+.def temp1 = r20 ; misc general register
+.def temp2 = r21 ; misc general register
+.def ioTempReg = r23
+.def bitmaskReg = r24
+.def scanCounter = r18 ; maximum 64
+
+.equ maxInputAddress = 65 ; maximum read address for interrupt expander
+.equ plexClockMask = (1<<PORTB0)
+.equ SPIDataOutMask = (1<<PORTB1)
+.equ SPIClockMask = (1<<PORTB2)
+.equ plexReadMask = (1<<PORTB3) ;handles clock and reading
+.equ SPIChipSelectMask = (1<<PORTB4) ; doubles as interrupt port to tell master to initiate communications
+
+
 .macro setupStack
     push r16
 
@@ -11,79 +27,89 @@
     pop r16
 .endmacro
 
+.macro acquireGPIORegisters
+    push ioTempReg
+    push bitmaskReg
+.endmacro
+
+.macro releaseGPIORegisters
+    pop bitmaskReg
+    pop ioTempReg
+.endmacro
+
 ; @0: constant containing the desired bitmask for the port bit
 .macro togglePortMacro
-    rcall acquireGPIORegisters
+    acquireGPIORegisters
 
     ldi bitmaskReg, @0
 
     rcall togglePort
 
-    rcall releaseGPIORegisters
+    releaseGPIORegisters
 .endmacro
 
 ; @0: constant containing the desired bitmask for the port bit
 .macro pulsePortMacro
-    rcall acquireGPIORegisters
+    acquireGPIORegisters
     ldi bitmaskReg, @0
 
     rcall togglePort
-    nop
+    rcall delay
     rcall togglePort
 
-    rcall releaseGPIORegisters
+    releaseGPIORegisters
 .endmacro
 
 ; @0: register that will store sensor output
 ; @1: constant containing the desired bitmask for the port bit
 .macro readPortMacro
-    rcall acquireGPIORegisters
+    acquireGPIORegisters
 
     ldi bitmaskReg, @1
     rcall readPort
     mov @0, ioTempReg
 
-    rcall releaseGPIORegisters
+    releaseGPIORegisters
 .endmacro
 
 ; @0: constant containing the desired bitmask for the port bit
 .macro setPortInputMacro
-    rcall acquireGPIORegisters
+    acquireGPIORegisters
 
     ldi bitmaskReg, @0
     rcall setPortInput
 
-    rcall releaseGPIORegisters
+    releaseGPIORegisters
 .endmacro
 
 ; @0 constant containing desired bitmaks for the port bit
 .macro setPortOutputMacro
-    rcall acquireGPIORegisters
+    acquireGPIORegisters
 
     ldi bitmaskReg, @0
     rcall setPortOutput
 
-    rcall releaseGPIORegisters
+    releaseGPIORegisters
 .endmacro
 
 ; @0 constant containing desired bitmask for port bit
 .macro setPortOutputLowMacro
-    rcall acquireGPIORegisters
+    acquireGPIORegisters
 
     ldi bitmaskReg, @0
     rcall setPortOutputLow
 
-    rcall releaseGPIORegisters
+    releaseGPIORegisters
 .endmacro
 
 ; @0 constant containing desired bitmask for port bit
 .macro setPortOutputHighMacro
-    rcall acquireGPIORegisters
+    acquireGPIORegisters
 
     ldi bitmaskReg, @0
     rcall setPortOutputHigh
 
-    rcall releaseGPIORegisters
+    releaseGPIORegisters
 .endmacro
 
 ; @0 label for a subroutine
@@ -111,36 +137,16 @@
     pop dataRegister
 .endmacro
 
-.def configBitmask = r16
-.def dataRegister = r17
-.def temp1 = r20 ; misc general register
-.def temp2 = r21 ; misc general register
-.def ioTempReg = r23
-.def bitmaskReg = r24
-.def scanCounter = r18 ; maximum 64
-
-.equ maxInputAddress = 65 ; maximum read address for interrupt expander
-.equ plexClockMask = (1<<PORTB0)
-.equ SPIDataOutMask = (1<<PORTB1)
-.equ SPIClockMask = (1<<PORTB2)
-.equ plexReadMask = (1<<PORTB3) ;handles clock and reading
-.equ SPIChipSelectMask = (1<<PORTB4) ; doubles as interrupt port to tell master to initiate communications
-
-.set TEST_NUM = 0
-
+.set TEST_NUM = 6
 .cseg
 .org 0x00
 
-.if TEST_NUM == 0
-main:
-    rcall start
-    rcall scanMainLoop
+;rcall spazz
+rcall start
 
-    rjmp main
-.else
 tests:
 .if TEST_NUM == 1
-    rcall testOutputPins
+    rcall spazz
 .endif
 
 
@@ -160,17 +166,36 @@ tests:
 
 
 .if TEST_NUM == 5
+    setPortOutputMacro plexClockMask
+    setPortOutputLowMacro plexClockMask
     rcall testSPIAwaitSelect
-.endif
+    setPortOutputHighMacro plexClockMask
 .endif
 
-runSubroutineInLoop spazz
+.if TEST_NUM == 6
+    runSubroutineInLoop spazz
+.endif
+
+.if TEST_NUM == 0
+main:
+    rcall scanMainLoop
+
+    rjmp main
+.endif
 
 spazz:
-    setPortOutputMacro SPIChipSelectMask
+    spazz_start:
     togglePortMacro SPIChipSelectMask
 
     rcall delay
+
+    togglePortMacro SPIChipSelectMask
+
+    rcall delay
+
+    rjmp spazz_start
+
+    ret
 
 delay: ; very basic delay routine with no inputs to use for tests
     push r16
@@ -189,6 +214,10 @@ delay: ; very basic delay routine with no inputs to use for tests
 
 testOutputPins: ; simple test to set pin to output so oscilloscope can read state
     setPortOutputMacro SPIChipSelectMask
+
+    rcall delay
+    rcall delay
+    rcall delay
     togglePortMacro SPIChipSelectMask
 
     rcall delay
@@ -197,13 +226,14 @@ testOutputPins: ; simple test to set pin to output so oscilloscope can read stat
 
     rcall delay
 
-    pulsePortMacro SPIChipSelectMask
+    setPortOutputLowMacro SPIChipSelectMask
+    ;togglePortMacro SPIChipSelectMask
 
     ret
 
 testSPISend: ;; send a sample message out the SPI interface for oscilloscope to read
     push r16
-    ldi r16, 0b10101010
+    ldi r16, 0b10111010
     SPITransferMacro r16
 
     pop r16
@@ -217,7 +247,7 @@ testSPISendReal:
     pop r16
     ret
 
-testInterruptTrigger:
+testInterruptTrigger: ; didnt get a signal
     rcall SPIInterruptMaster
     ret
 
@@ -241,9 +271,10 @@ testGPIOOpts:
     ret
 
 testSPIAwaitSelect:
+    setPortOutputMacro plexReadMask
+    setPortOutputHighMacro plexReadMask
     rcall SPIAwaitSelect
-    setPortOutputMacro SPIChipSelectMask
-    setPortOutputHighMacro SPIChipSelectMask
+    setPortOutputLowMacro plexReadMask
 
     ret
 
@@ -251,18 +282,6 @@ start:
     setupStack RAMEND
     rcall GPIOSetup
     rcall SPISetup
-
-    ret
-
-acquireGPIORegisters:
-    push ioTempReg
-    push bitmaskReg
-
-    ret
-
-releaseGPIORegisters:
-    pop bitmaskReg
-    pop ioTempReg
 
     ret
 
@@ -329,18 +348,26 @@ SPISetup:
     ret
 
 SPIInterruptMaster:
-    setPortOutputMacro SPIChipSelectMask
+    ;setPortOutputMacro SPIChipSelectMask
     pulsePortMacro SPIChipSelectMask
-    setPortInputMacro SPIChipSelectMask
+    ;setPortInputMacro SPIChipSelectMask
 
     ret
 
 SPIAwaitSelect: ; add code here that will handle a timeout
     push dataRegister
+    setPortInputMacro SPIChipSelectMask
+    setPortOutputHighMacro SPIChipSelectMask
 awaitSelect:
     readPortMacro dataRegister, SPIChipSelectMask
+    ;rcall delay ; delete this later maybe
     tst dataRegister
     brne awaitSelect ; selected at logical low
+
+    setPortOutputMacro SPIChipSelectMask
+    setPortOutputLowMacro SPIChipSelectMask
+
+    rcall delay
 
     pop dataRegister
 
@@ -366,9 +393,9 @@ slaveSPITransferLoop:
 GPIOSetup:
     setPortOutputMacro SPIDataOutMask
     setPortOutputMacro plexClockMask
+    setPortOutputMacro SPIChipSelectMask
 
     setPortInputMacro SPIClockMask
-    setPortInputMacro SPIChipSelectMask
     setPortInputMacro plexReadMask
 
     ret
@@ -403,3 +430,6 @@ next_iteration:
     rjmp start_loop
 
     ret
+
+silly:
+    nop
